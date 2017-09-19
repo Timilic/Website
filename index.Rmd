@@ -1,0 +1,144 @@
+---
+title: "SQL"
+output: html_document
+---
+
+## Filtering Columns and Rows
+
+With SQL, you can filter columns with SELECT and ROWS with WHERE. Let'stry an example with the Lahman baseball database. First we need to load the appropriate packages.
+
+```{r warning=FALSE, message=FALSE}
+library(Lahman)
+library(sqldf)
+```
+
+#________________________________________________
+
+####Example 1
+Now, suppose, we would like to see the homerun totals for the 1927 Yankees. We could write the following:
+```{r}
+query<-"SELECT playerID,yearID,teamID,HR FROM Batting
+WHERE teamID='NYA' and yearID=1927"
+sqldf(query)
+```
+
+#________________________________________________
+
+####Example 2
+Here, we can see all players from Yankees that have scored atleast 40 homeruns
+```{r}
+query<-"SELECT playerID,teamID,yearID,HR FROM Batting
+WHERE teamID='NYA' and HR>=40"
+sqldf(query)
+```
+
+#________________________________________________
+
+####Example 3
+Here, we can see those players who had 40 homeruns but didn't have more than 60 strikeouts
+```{r}
+query<-"SELECT playerID,teamID,yearID,HR,SO FROM Batting 
+WHERE HR>40 and SO<60"
+sqldf(query)
+```
+
+#________________________________________________
+
+####Example 4
+We can also see the statistics from 1970's for Phillies for all players who have had more than 30 homeruns
+```{r}
+query<-"SELECT playerID,teamID,yearID,HR FROM Batting
+WHERE yearID>=1970 and yearID<1980 and HR>30 and teamID='PHI'"
+sqldf(query)
+```
+
+#________________________________________________
+
+###Order by
+
+####Example 1
+We can also arrange them by descending order of number of homeruns
+```{r}
+query<-"SELECT playerID,teamID,yearID,HR FROM Batting
+WHERE HR>50
+ORDER BY HR DESC"
+sqldf(query)
+```
+
+#________________________________________________
+
+####Example 2
+We can narrow down the search for players that had at least 400 at bats but had less than 10 strikeouts and arrange it by the least amount of strikeouts
+```{r}
+query<-"SELECT playerID,teamID,yearID,SO,AB FROM Batting
+WHERE SO<10 and AB>=400
+ORDER BY SO"
+sqldf(query)
+```
+
+#________________________________________________
+
+###Aggregation
+
+####Example 1
+We can narrow down the output by using aggregation. Let's say we want to see all players who had more than 600 homeruns and order them from the highest to the lowest number of homeruns.
+```{r}
+query<-"SELECT playerID,sum(HR) FROM Batting
+GROUP BY playerID
+HAVING sum(HR)>=600
+ORDER BY sum(HR) DESC"
+sqldf(query)
+```
+
+#________________________________________________
+
+####Example 2
+If we want to see the players who had more than 30 average homeruns and sort them from highest to lowest, we type in this:
+```{r}
+query<-"SELECT playerID,avg(HR) FROM Batting
+GROUP BY playerID
+HAVING avg(HR)>30
+ORDER BY avg(HR) DESC"
+sqldf(query)
+```
+
+#________________________________________________
+
+###Joins
+
+####Example 1
+Joins are used for pulling infomation from multiple tables at the same time. Here, we will join Batting with MASTER table
+```{r}
+query<-"SELECT nameFirst,nameLast,teamID,yearID,HR
+FROM Batting INNER JOIN Master
+ON Batting.playerID=Master.playerID
+WHERE Batting.playerID='ruthba01'"
+sqldf(query)
+```
+
+#________________________________________________
+
+####Example 2
+Here is another example of that, but in addition to just the first and the last name, we also sort them by the number of homeruns from most to least
+```{r}
+query<-"SELECT nameFirst,nameLast,teamID,yearID,HR
+FROM Batting INNER JOIN Master
+on Batting.playerID=Master.playerID
+WHERE HR>50
+ORDER BY HR DESC"
+sqldf(query)
+```
+
+#________________________________________________
+
+####Example 3
+In the next example, we will pull information from table "Teams"
+```{r}
+query<-"SELECT playerID,name,Batting.yearID,Batting.HR
+FROM Batting INNER JOIN Teams
+on Batting.teamID=Teams.teamID AND Batting.yearID=Teams.yearID
+WHERE playerID='ruthba01'"
+sqldf(query)
+```
+
+#________________________________________________
