@@ -142,3 +142,17 @@ sqldf(query)
 ```
 
 #________________________________________________
+
+####Example 4
+Here, we can list all players who had more than 1 million dollars average salary and have the first name Bob by descending order
+```{r}
+query<-"SELECT Master.playerID,nameFirst,nameLast,yearID,avg(salary)
+FROM Master INNER JOIN Salaries
+on Master.playerID=Salaries.playerID
+GROUP BY Master.playerID
+HAVING avg(salary)>=1000000 AND nameFirst='Bob'
+ORDER BY avg(salary) DESC"
+sqldf(query)
+```
+
+#________________________________________________

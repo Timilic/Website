@@ -565,6 +565,29 @@ sqldf(query)</code></pre>
 </div>
 <div id="section-11" class="section level1">
 <h1>________________________________________________</h1>
+<div id="example-4-1" class="section level4">
+<h4>Example 4</h4>
+<p>Here, we can list all players who had more than 1 million dollars average salary and have the first name Bob by descending order</p>
+<pre class="r"><code>query&lt;-&quot;SELECT Master.playerID,nameFirst,nameLast,yearID,avg(salary)
+FROM Master INNER JOIN Salaries
+on Master.playerID=Salaries.playerID
+GROUP BY Master.playerID
+HAVING avg(salary)&gt;=1000000 AND nameFirst='Bob'
+ORDER BY avg(salary) DESC&quot;
+sqldf(query)</code></pre>
+<pre><code>##    playerID nameFirst  nameLast yearID avg(salary)
+## 1 wickmbo01       Bob   Wickman   2007     2635813
+## 2 welchbo01       Bob     Welch   1994     1930417
+## 3 howrybo01       Bob     Howry   2010     1804583
+## 4 hornebo01       Bob    Horner   1988     1416667
+## 5 tewksbo01       Bob Tewksbury   1998     1288182
+## 6 stanlbo01       Bob   Stanley   1988     1067500
+## 7 boonebo01       Bob     Boone   1990     1047580
+## 8 ojedabo01       Bob     Ojeda   1993     1035926</code></pre>
+</div>
+</div>
+<div id="section-12" class="section level1">
+<h1>________________________________________________</h1>
 </div>
 
 
